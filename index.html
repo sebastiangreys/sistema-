@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema de calificaciones</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+ --bg:#09090f;
+ --surface:#12121c;
+ --surface2:#191925;
+ --primary:#7545f5;
+ --primary-light:#9b78ff;
+ --text:#f5f3ff;
+ --muted:#9291a5;
+ --border:#28283a;
+ --success:#20c997;
+ --danger:#ff5c70;
+}
+
+body{
+ font-family:Arial,sans-serif;
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+}
+
+header{
+ background:#080713;
+ color:white;
+ padding:25px 30px;
+ border-bottom:1px solid var(--border);
+}
+
+header h1{margin-top:0}
+
+main{
+ max-width:1050px;
+ margin:22px auto;
+ padding:0 16px;
+}
+
+.grid,.tests{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:15px;
+}
+
+.tests{
+ grid-template-columns:repeat(3,1fr);
+ margin-top:16px;
+}
+
+.card{
+ background:var(--surface);
+ border:1px solid var(--border);
+ border-radius:16px;
+ padding:22px;
+ transition:.25s ease;
+}
+
+.card:hover{
+ border-color:#514078;
+ transform:translateY(-2px);
+}
+
+h2{
+ color:var(--text);
+ margin-top:0;
+}
+label{
+ display:block;
+ margin:10px 0 5px;
+ font-weight:bold;
+ font-size:13px;
+}
+
+input{
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:9px;
+ width:100%;
+ background:var(--surface2);
+ color:var(--text);
+ outline:none;
+ transition:.2s;
+}
+
+input:focus{
+ border-color:var(--primary);
+ box-shadow:0 0 0 3px #7545f533;
+}
+
+input::placeholder{
+ color:var(--muted);
+}
+
+.row{
+ display:flex;
+ gap:8px;
+}
+
+.row>div{flex:1;min-width:0}
+
+button{
+ padding:11px 16px;
+ border:0;
+ border-radius:9px;
+ background:var(--primary);
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+ margin:10px 5px 0 0;
+ transition:.2s;
+}
+
+button:hover{
+ background:var(--primary-light);
+ transform:translateY(-2px);
+}
+
+button:hover{opacity:.85}
+
+.alt{
+ background:var(--surface2);
+ color:var(--text);
+ border:1px solid var(--border);
+}
+
+.alt:hover{
+ background:#29243b;
+}
+
+.msg{
+ background:var(--surface2);
+ color:var(--text);
+ border:1px solid var(--border);
+ padding:12px;
+ border-radius:10px;
+ margin-top:10px;
+ font-size:13px;
+ white-space:pre-line;
+}
+
+.bad{
+ background:#351b24;
+ color:#ff8290;
+}
+
+.good{
+ background:#142e29;
+ color:#50d9a4;
+}
+
+.muted{
+ color:var(--muted);
+ font-size:13px;
+ line-height:1.6;
+}
+
+.bad{
+ background:#fff0ef;
+ color:#983b35;
+}
+
+.good{
+ background:#e7f5ed;
+ color:#176243;
+}
+
+.muted{
+ color:#667987;
+ font-size:13px;
+ line-height:1.5;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:13px;
+}
+
+td,th{
+ padding:12px;
+ border-bottom:1px solid var(--border);
+ text-align:left;
+}
+
+th{
+ color:var(--primary-light);
+ font-weight:bold;
+}
+
+td{
+ color:var(--text);
+}
+
+.actions button{
+ margin:2px;
+ padding:6px 9px;
+}
+
+@media(max-width:760px){
+ .grid,.tests{grid-template-columns:1fr}
+ .row{flex-direction:column}
+}
+header{
+ position:relative;
+ background:#080713;
+ color:white;
+ padding:25px 30px;
+ min-height:125px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:20px;
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+
+.brand img{
+ width:65px;
+ height:65px;
+ object-fit:contain;
+}
+
+.brand-name{
+ font-size:24px;
+ font-weight:900;
+ letter-spacing:7px;
+ color:white;
+}
+
+.brand-name span{
+ color:#6735f5;
+}
+
+@media(max-width:600px){
+ header{
+  flex-direction:column;
+  align-items:flex-start;
+ }
+ .brand img{
+  width:45px;
+  height:45px;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div>
+<h1>Sistema de calificaciones</h1>
+<p>Control de calidad · EC.4 / A.1.10</p>
+</div>
+
+<div class="brand">
+<img src="greyx-logo.png" alt="Logo GREYX">
+
+<div class="brand-name">
+GREY<span>X</span>
+</div>
+</div>
+
+</header>
+<main>
+
+<div class="msg">
+<b>Objetivo:</b> Registrar estudiantes, calcular sus promedios
+y consultar sus calificaciones correctamente.
+</div>
+
+<div class="grid">
+
+<section class="card">
+<h2>Registrar calificaciones</h2>
+
+<p class="muted">
+Introduzca el nombre del estudiante y tres notas de 0 a 100.
+</p>
+
+<label>Nombre del estudiante</label>
+<input id="name" placeholder="Ej. María López" maxlength="100">
+
+<div class="row">
+<div>
+<label>Nota 1</label>
+<input id="a" type="number" min="0" max="100" step="any">
+</div>
+
+<div>
+<label>Nota 2</label>
+<input id="b" type="number" min="0" max="100" step="any">
+</div>
+
+<div>
+<label>Nota 3</label>
+<input id="c" type="number" min="0" max="100" step="any">
+</div>
+</div>
+
+<div id="preview" class="msg">
+Promedio: pendiente.
+</div>
+
+<button id="save">Guardar registro</button>
+<button class="alt" id="clearform">Limpiar</button>
+
+<div id="formmsg" class="msg">
+Resultado del registro.
+</div>
+</section>
+
+<section class="card">
+<h2>Boletín de calificaciones</h2>
+
+<div id="records" class="muted">
+No hay registros todavía.
+</div>
+
+<button class="alt" id="clear">
+Borrar registros
+</button>
+</section>
+
+</div>
+
+<div class="tests">
+
+<section class="card">
+<h2>Reto 1 · Unitaria</h2>
+<p class="muted">
+Comprueba si 80, 90 y 100 producen un promedio de 90.
+</p>
+<button id="unit">Probar cálculo</button>
+<div id="u" class="msg">Pendiente.</div>
+</section>
+
+<section class="card">
+<h2>Reto 2 · Integración</h2>
+<p class="muted">
+Comprueba el cálculo, guardado y consulta de información.
+</p>
+<button id="integration">Probar integración</button>
+<div id="i" class="msg">Pendiente.</div>
+</section>
+
+<section class="card">
+<h2>Reto 3 · Sistema</h2>
+<p class="muted">
+Comprueba el proceso completo con María López.
+</p>
+<button id="system">Probar sistema</button>
+<div id="s" class="msg">Pendiente.</div>
+</section>
+
+</div>
+
+<section class="card" style="margin-top:16px">
+
+<h2>Registro de hallazgos</h2>
+
+<p class="muted">
+Resultados de las pruebas realizadas.
+</p>
+
+<table>
+<thead>
+<tr>
+<th>Prueba</th>
+<th>Resultado esperado</th>
+<th>Resultado obtenido</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Unitaria</td>
+<td>Promedio correcto</td>
+<td id="resultUnit">Pendiente</td>
+</tr>
+
+<tr>
+<td>Integración</td>
+<td>Datos guardados y consultados</td>
+<td id="resultIntegration">Pendiente</td>
+</tr>
+
+<tr>
+<td>Sistema</td>
+<td>Proceso completo</td>
+<td id="resultSystem">Pendiente</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+
+</main>
+
+<script>
+
+// Almacenamiento temporal de registros
+let rows = [];
+
+// FUNCIÓN 1: Calcular promedio correctamente
+function average(a,b,c){
+ return (Number(a)+Number(b)+Number(c))/3;
+}
+
+// FUNCIÓN 2: Obtener las notas
+function grades(){
+ return [
+  $("a").value,
+  $("b").value,
+  $("c").value
+ ];
+}
+
+// FUNCIÓN AUXILIAR
+function $(id){
+ return document.getElementById(id);
+}
+
+// FUNCIÓN 3: Validar información
+function valid(name, grades){
+
+ if(!name || !name.trim()){
+  return false;
+ }
+
+ return grades.every(v =>
+  v.trim() !== "" &&
+  Number.isFinite(Number(v)) &&
+  Number(v) >= 0 &&
+  Number(v) <= 100
+ );
+}
+
+// FUNCIÓN 4: Mostrar mensajes
+function message(id,text,type){
+
+ $(id).textContent=text;
+ $(id).className="msg "+type;
+
+}
+
+// FUNCIÓN 5: Actualizar boletín
+function render(){
+
+ const container=$("records");
+
+ container.replaceChildren();
+
+ if(rows.length===0){
+  container.textContent="No hay registros todavía.";
+  return;
+ }
+
+ const table=document.createElement("table");
+
+ const header=document.createElement("tr");
+
+ ["Estudiante","Notas","Promedio"].forEach(title=>{
+  const th=document.createElement("th");
+  th.textContent=title;
+  header.appendChild(th);
+ });
+
+ table.appendChild(header);
+
+ rows.forEach(r=>{
+
+  const tr=document.createElement("tr");
+
+  const values=[
+   r.name,
+   r.grades.join(" / "),
+   r.average.toFixed(2)
+  ];
+
+  values.forEach(value=>{
+   const td=document.createElement("td");
+   td.textContent=value;
+   tr.appendChild(td);
+  });
+
+  table.appendChild(tr);
+
+ });
+
+ container.appendChild(table);
+}
+
+// FUNCIÓN 6: Registrar estudiante
+function saveRecord(name,grades){
+
+ if(!valid(name,grades)){
+  return false;
+ }
+
+ const calculated=average(...grades);
+
+ rows.push({
+  name:name.trim(),
+  grades:grades.map(Number),
+  average:calculated
+ });
+
+ render();
+
+ return true;
+}
+
+// VISTA PREVIA DEL PROMEDIO
+["a","b","c"].forEach(id=>{
+
+ $(id).addEventListener("input",()=>{
+
+  const g=grades();
+
+  if(g.every(v=>v.trim()!=="") &&
+     g.every(v=>Number.isFinite(Number(v)) &&
+     Number(v)>=0 && Number(v)<=100)){
+
+   $("preview").textContent=
+   "Promedio: "+average(...g).toFixed(2);
+
+  }else{
+   $("preview").textContent=
+   "Promedio: pendiente. Verifique las notas.";
+  }
+
+ });
+
+});
+
+// BOTÓN GUARDAR
+$("save").onclick=()=>{
+
+ const name=$("name").value;
+ const g=grades();
+
+ if(!valid(name,g)){
+  message(
+   "formmsg",
+   "Complete el nombre y coloque tres notas entre 0 y 100.",
+   "bad"
+  );
+  return;
+ }
+
+ saveRecord(name,g);
+
+ message(
+  "formmsg",
+  "Registro guardado correctamente.",
+  "good"
+ );
+
+};
+
+// LIMPIAR FORMULARIO
+$("clearform").onclick=()=>{
+
+ ["name","a","b","c"].forEach(id=>{
+  $(id).value="";
+ });
+
+ $("preview").textContent="Promedio: pendiente.";
+
+ message("formmsg","Formulario limpio.","good");
+
+};
+
+// BORRAR REGISTROS
+$("clear").onclick=()=>{
+
+ rows=[];
+
+ render();
+
+ message("formmsg","Registros eliminados.","good");
+
+};
+
+// PRUEBA UNITARIA
+$("unit").onclick=()=>{
+
+ const result=average(80,90,100);
+ const passed=result===90;
+
+ message(
+  "u",
+  "Esperado: 90\nObtenido: "+result+"\n"+
+  (passed?"PRUEBA APROBADA":"PRUEBA FALLIDA"),
+  passed?"good":"bad"
+ );
+
+ $("resultUnit").textContent=
+ passed?"Aprobada":"Fallida";
+
+};
+
+// PRUEBA DE INTEGRACIÓN
+$("integration").onclick=()=>{
+
+ const previous=rows;
+
+ rows=[];
+
+ const saved=saveRecord(
+  "Ana Prueba",
+  [80,90,100]
+ );
+
+ const record=rows[0];
+
+ const passed=
+  saved &&
+  record.average===90 &&
+  $("records").textContent.includes("Ana Prueba") &&
+  $("records").textContent.includes("90.00");
+
+ rows=previous;
+
+ render();
+
+ message(
+  "i",
+  "Guardado: "+(saved?"Correcto":"Incorrecto")+
+  "\nPromedio: "+(record?record.average:"No disponible")+
+  "\nConsulta: "+(passed?"Correcta":"Incorrecta"),
+  passed?"good":"bad"
+ );
+
+ $("resultIntegration").textContent=
+ passed?"Aprobada":"Fallida";
+
+};
+
+// PRUEBA DE SISTEMA
+$("system").onclick=()=>{
+
+ const previous=rows;
+
+ rows=[];
+
+ const name="María López";
+ const grades=[85,90,95];
+
+ const saved=saveRecord(name,grades);
+
+ const record=rows.find(r=>r.name===name);
+
+ const passed=
+  saved &&
+  record &&
+  record.average===90 &&
+  $("records").textContent.includes("María López") &&
+  $("records").textContent.includes("90.00");
+
+ rows=previous;
+
+ render();
+
+ message(
+  "s",
+  "Estudiante: "+name+
+  "\nNotas: 85, 90, 95"+
+  "\nPromedio: "+(record?record.average.toFixed(2):"No disponible")+
+  "\nResultado: "+(passed?"PROCESO COMPLETADO":"ERROR EN EL PROCESO"),
+  passed?"good":"bad"
+ );
+
+ $("resultSystem").textContent=
+ passed?"Aprobada":"Fallida";
+
+};
+
+// INICIAR SISTEMA
+render();
+
+</script>
+
+</body>
+</html>
